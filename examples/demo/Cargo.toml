@@ -1,0 +1,15 @@
+[package]
+name = "example-demo"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+amazing = { path = "../../amazing" }
+anyhow.workspace = true
+axum.workspace = true
+redis.workspace = true
+serde.workspace = true
+sqlx.workspace = true
+tokio.workspace = true
+tower = "0.5"
+validator.workspace = true
