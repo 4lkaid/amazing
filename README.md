@@ -1,5 +1,7 @@
 # Amazing
 
+Streamline the integration and usage of [Axum](https://github.com/tokio-rs/axum), [SQLx](https://github.com/launchbadge/sqlx), and [Redis](https://github.com/redis-rs/redis-rs).
+
 Without further ado, please see the [example](examples/demo).
 
 ## Usage
