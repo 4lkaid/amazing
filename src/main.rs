@@ -9,6 +9,7 @@ async fn main() -> anyhow::Result<()> {
         .before_run(|| {
             tokio::spawn(async move {
                 service::asset_type::AssetTypeService::init().await?;
+                service::action_type::ActionTypeService::init().await?;
                 Ok(())
             })
         })

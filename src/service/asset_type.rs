@@ -1,6 +1,5 @@
-use axum_kit::{postgres, AppResult};
-
 use crate::model::asset_type::AssetTypeModel;
+use axum_kit::{postgres, AppResult};
 use std::sync::OnceLock;
 
 static ASSET_TYPE: OnceLock<Vec<AssetTypeModel>> = OnceLock::new();
