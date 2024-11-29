@@ -5,6 +5,7 @@ use std::sync::OnceLock;
 static ASSET_TYPE: OnceLock<Vec<AssetTypeModel>> = OnceLock::new();
 
 pub struct AssetTypeService;
+
 impl AssetTypeService {
     pub async fn init() -> AppResult<()> {
         let asset_types = AssetTypeModel::fetch_all(postgres::conn()).await?;

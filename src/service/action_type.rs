@@ -5,6 +5,7 @@ use std::sync::OnceLock;
 static ACTION_TYPE: OnceLock<Vec<ActionTypeModel>> = OnceLock::new();
 
 pub struct ActionTypeService;
+
 impl ActionTypeService {
     pub async fn init() -> AppResult<()> {
         let action_types = ActionTypeModel::fetch_all(postgres::conn()).await?;
