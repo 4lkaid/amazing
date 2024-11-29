@@ -1,5 +1,7 @@
 # amazing
 
+[![GitHub CI](https://github.com/4lkaid/amazing/actions/workflows/ci.yaml/badge.svg)](https://github.com/4lkaid/amazing/actions/workflows/ci.yaml)
+
 `amazing` 是一款无关业务、结算规则的虚拟资产管理系统，可以精准追踪每个账户的资金变动与资产状态。
 
 ## 最低支持 Rust 版本

@@ -1,0 +1,42 @@
+name: GitHub CI
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "src/**"
+      - "Cargo.toml"
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install SQLx-CLI
+        run: cargo install sqlx-cli
+      - name: Create database
+        env:
+          DATABASE_URL: postgres://postgres:password@localhost:5432/amazing
+        run: sqlx database create
+      - name: Run migrations
+        env:
+          DATABASE_URL: postgres://postgres:password@localhost:5432/amazing
+        run: sqlx migrate run
+      - name: Run cargo clippy
+        env:
+          DATABASE_URL: postgres://postgres:password@localhost:5432/amazing
+        run: cargo clippy --all-targets --all-features -- -D warnings
+      - name: Run Rust formatting checks
+        run: cargo fmt --all --check
