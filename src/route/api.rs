@@ -1,5 +1,9 @@
 use crate::handler;
-use axum::{middleware, routing::get, Router};
+use axum::{
+    middleware,
+    routing::{get, post},
+    Router,
+};
 use axum_kit::middleware::{cors, request_id, request_response_logger, trace};
 use tower::ServiceBuilder;
 
@@ -9,6 +13,12 @@ pub fn init() -> Router {
         .route("/assets", get(handler::asset_type::list))
         // 获取账户操作类型
         .route("/actions", get(handler::action_type::list))
+        // 添加资产账户
+        .route("/accounts/new", post(handler::account::create))
+        // 获取资产账户信息
+        .route("/accounts/info", post(handler::account::info))
+        // 资产账户操作
+        .route("/accounts/actions", post(handler::account::actions))
         .layer(
             ServiceBuilder::new()
                 .layer(request_id::set_request_id())
