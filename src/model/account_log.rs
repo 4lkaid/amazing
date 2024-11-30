@@ -3,7 +3,7 @@ use axum_kit::AppResult;
 use serde::{Deserialize, Serialize};
 use sqlx::{
     types::{chrono::NaiveDateTime, Decimal},
-    Executor, Postgres,
+    PgExecutor,
 };
 
 #[derive(Deserialize, Serialize)]
@@ -23,19 +23,15 @@ pub struct AccountLogModel {
     pub description: String,
     pub created_at: NaiveDateTime,
 }
-
 impl AccountLogModel {
-    pub async fn create<'a, E>(
-        executor: E,
+    pub async fn create(
+        executor: impl PgExecutor<'_>,
         account: &AccountModel,
         action_type: &ActionTypeModel,
         amount: f64,
         order_number: &str,
         description: &str,
-    ) -> AppResult<()>
-    where
-        E: Executor<'a, Database = Postgres>,
-    {
+    ) -> AppResult<()> {
         sqlx::query!(
             r#"insert into account_log (account_id, action_type_id, amount_available_balance, amount_frozen_balance, amount_total_income, amount_total_expense, available_balance_after, frozen_balance_after, total_income_after, total_expense_after, order_number, description)
                 values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)"#,

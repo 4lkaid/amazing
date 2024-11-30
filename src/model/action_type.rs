@@ -3,7 +3,7 @@ use num_traits::cast::FromPrimitive;
 use serde::{Deserialize, Serialize};
 use sqlx::{
     types::{chrono::NaiveDateTime, Decimal},
-    PgPool,
+    PgExecutor,
 };
 
 #[derive(Deserialize, Serialize, sqlx::Type, PartialEq)]
@@ -41,7 +41,7 @@ pub struct ActionTypeModel {
 }
 
 impl ActionTypeModel {
-    pub async fn fetch_all(pool: &PgPool) -> AppResult<Vec<Self>> {
+    pub async fn fetch_all(executor: impl PgExecutor<'_>) -> AppResult<Vec<Self>> {
         let action_types: Vec<Self> = sqlx::query_as!(
             Self,
             r#"select
@@ -60,7 +60,7 @@ impl ActionTypeModel {
             where
                 is_active = true"#
         )
-        .fetch_all(pool)
+        .fetch_all(executor)
         .await?;
         Ok(action_types)
     }

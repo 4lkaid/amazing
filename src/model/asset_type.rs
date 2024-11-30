@@ -1,6 +1,6 @@
 use axum_kit::AppResult;
 use serde::{Deserialize, Serialize};
-use sqlx::{types::chrono::NaiveDateTime, PgPool};
+use sqlx::{types::chrono::NaiveDateTime, PgExecutor};
 
 #[derive(Deserialize, Serialize)]
 pub struct AssetTypeModel {
@@ -13,7 +13,7 @@ pub struct AssetTypeModel {
 }
 
 impl AssetTypeModel {
-    pub async fn fetch_all(pool: &PgPool) -> AppResult<Vec<Self>> {
+    pub async fn fetch_all(executor: impl PgExecutor<'_>) -> AppResult<Vec<Self>> {
         let asset_types: Vec<Self> = sqlx::query_as!(
             Self,
             r#"select
@@ -28,7 +28,7 @@ impl AssetTypeModel {
             where
                 is_active = true"#
         )
-        .fetch_all(pool)
+        .fetch_all(executor)
         .await?;
         Ok(asset_types)
     }

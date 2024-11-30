@@ -3,7 +3,7 @@ use axum_kit::AppResult;
 use serde::{Deserialize, Serialize};
 use sqlx::{
     types::{chrono::NaiveDateTime, Decimal},
-    Executor, PgPool, Postgres,
+    PgExecutor,
 };
 
 #[derive(Deserialize, Serialize)]
@@ -21,7 +21,11 @@ pub struct AccountModel {
 }
 
 impl AccountModel {
-    pub async fn create(pool: &PgPool, user_id: i32, asset_type_id: i32) -> AppResult<Self> {
+    pub async fn create(
+        executor: impl PgExecutor<'_>,
+        user_id: i32,
+        asset_type_id: i32,
+    ) -> AppResult<Self> {
         let account = sqlx::query_as!(
             Self,
             r#"insert into account (user_id, asset_type_id, is_active)
@@ -40,12 +44,16 @@ impl AccountModel {
             user_id,
             asset_type_id
         )
-        .fetch_one(pool)
+        .fetch_one(executor)
         .await?;
         Ok(account)
     }
 
-    pub async fn find(pool: &PgPool, user_id: i32, asset_type_id: i32) -> AppResult<Option<Self>> {
+    pub async fn find(
+        executor: impl PgExecutor<'_>,
+        user_id: i32,
+        asset_type_id: i32,
+    ) -> AppResult<Option<Self>> {
         let account = sqlx::query_as!(
             Self,
             r#"select
@@ -67,22 +75,19 @@ impl AccountModel {
             user_id,
             asset_type_id
         )
-        .fetch_optional(pool)
+        .fetch_optional(executor)
         .await?;
         Ok(account)
     }
 
     #[allow(dead_code)]
-    pub async fn update_balance<'a, E>(
-        executor: E,
+    pub async fn update_balance(
+        executor: impl PgExecutor<'_>,
         user_id: i32,
         asset_type_id: i32,
         action_type: &ActionTypeModel,
         amount: f64,
-    ) -> AppResult<Self>
-    where
-        E: Executor<'a, Database = Postgres>,
-    {
+    ) -> AppResult<Self> {
         let account = sqlx::query_as!(
             Self,
             r#"update account
@@ -121,13 +126,17 @@ impl AccountModel {
 
     // 资产账户是否存在
     #[allow(dead_code)]
-    pub async fn is_exists(pool: &PgPool, user_id: i32, asset_type_id: i32) -> bool {
+    pub async fn is_exists(
+        executor: impl PgExecutor<'_>,
+        user_id: i32,
+        asset_type_id: i32,
+    ) -> bool {
         if let Ok(Some(exists)) = sqlx::query_scalar!(
             r#"select exists(select 1 from account where user_id = $1 and asset_type_id = $2)"#,
             user_id,
             asset_type_id
         )
-        .fetch_one(pool)
+        .fetch_one(executor)
         .await
         {
             return exists;
@@ -137,13 +146,17 @@ impl AccountModel {
 
     // 资产账户是否启用
     #[allow(dead_code)]
-    pub async fn is_active(pool: &PgPool, user_id: i32, asset_type_id: i32) -> bool {
+    pub async fn is_active(
+        executor: impl PgExecutor<'_>,
+        user_id: i32,
+        asset_type_id: i32,
+    ) -> bool {
         if let Ok(Some(exists)) = sqlx::query_scalar!(
             r#"select exists(select 1 from account where user_id = $1 and asset_type_id = $2 and is_active = true)"#,
             user_id,
             asset_type_id
         )
-        .fetch_one(pool)
+        .fetch_one(executor)
         .await
         {
             return exists;
