@@ -108,12 +108,20 @@ impl<'a> AccountService {
         }
         let amount = account_action_request.amount;
         let action_type = ActionTypeService::by_id(account_action_request.action_type_id).unwrap();
+        let amount_available_balance = action_type
+            .available_balance_change
+            .calculate_change(amount);
+        let amount_frozen_balance = action_type.frozen_balance_change.calculate_change(amount);
+        let amount_total_income = action_type.total_income_change.calculate_change(amount);
+        let amount_total_expense = action_type.total_expense_change.calculate_change(amount);
         let account = AccountModel::update_balance(
             &mut **tx,
             account_action_request.user_id,
             account_action_request.asset_type_id,
-            action_type,
-            amount,
+            amount_available_balance,
+            amount_frozen_balance,
+            amount_total_income,
+            amount_total_expense,
         )
         .await?;
         // 扣减`可用余额/冻结余额`时，不允许`可用余额/冻结余额`为负数
@@ -131,9 +139,16 @@ impl<'a> AccountService {
         }
         AccountLogModel::create(
             &mut **tx,
-            &account,
-            action_type,
-            amount,
+            account.id,
+            action_type.id,
+            amount_available_balance,
+            amount_frozen_balance,
+            amount_total_income,
+            amount_total_expense,
+            account.available_balance,
+            account.frozen_balance,
+            account.total_income,
+            account.total_expense,
             account_action_request
                 .order_number
                 .as_deref()

@@ -1,4 +1,3 @@
-use super::{account::AccountModel, action_type::ActionTypeModel};
 use axum_kit::AppResult;
 use serde::{Deserialize, Serialize};
 use sqlx::{
@@ -23,31 +22,55 @@ pub struct AccountLogModel {
     pub description: String,
     pub created_at: NaiveDateTime,
 }
+
 impl AccountLogModel {
+    #[allow(clippy::too_many_arguments)]
     pub async fn create(
         executor: impl PgExecutor<'_>,
-        account: &AccountModel,
-        action_type: &ActionTypeModel,
-        amount: f64,
+        account_id: i32,
+        action_type_id: i32,
+        amount_available_balance: Decimal,
+        amount_frozen_balance: Decimal,
+        amount_total_income: Decimal,
+        amount_total_expense: Decimal,
+        available_balance_after: Decimal,
+        frozen_balance_after: Decimal,
+        total_income_after: Decimal,
+        total_expense_after: Decimal,
         order_number: &str,
         description: &str,
     ) -> AppResult<()> {
         sqlx::query!(
-            r#"insert into account_log (account_id, action_type_id, amount_available_balance, amount_frozen_balance, amount_total_income, amount_total_expense, available_balance_after, frozen_balance_after, total_income_after, total_expense_after, order_number, description)
-                values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)"#,
-            account.id,
-            action_type.id,
-            action_type.available_balance_change.calculate_change(amount),
-            action_type.frozen_balance_change.calculate_change(amount),
-            action_type.total_income_change.calculate_change(amount),
-            action_type.total_expense_change.calculate_change(amount),
-            account.available_balance,
-            account.frozen_balance,
-            account.total_income,
-            account.total_expense,
+            r#"insert into account_log (
+                account_id,
+                action_type_id,
+                amount_available_balance,
+                amount_frozen_balance,
+                amount_total_income,
+                amount_total_expense,
+                available_balance_after,
+                frozen_balance_after,
+                total_income_after,
+                total_expense_after,
+                order_number,
+                description
+            )
+            values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)"#,
+            account_id,
+            action_type_id,
+            amount_available_balance,
+            amount_frozen_balance,
+            amount_total_income,
+            amount_total_expense,
+            available_balance_after,
+            frozen_balance_after,
+            total_income_after,
+            total_expense_after,
             order_number,
-            description,
-        ).execute(executor).await?;
+            description
+        )
+        .execute(executor)
+        .await?;
         Ok(())
     }
 }

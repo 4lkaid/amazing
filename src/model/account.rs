@@ -1,4 +1,3 @@
-use super::action_type::ActionTypeModel;
 use axum_kit::AppResult;
 use serde::{Deserialize, Serialize};
 use sqlx::{
@@ -85,8 +84,10 @@ impl AccountModel {
         executor: impl PgExecutor<'_>,
         user_id: i32,
         asset_type_id: i32,
-        action_type: &ActionTypeModel,
-        amount: f64,
+        amount_available_balance: Decimal,
+        amount_frozen_balance: Decimal,
+        amount_total_income: Decimal,
+        amount_total_expense: Decimal,
     ) -> AppResult<Self> {
         let account = sqlx::query_as!(
             Self,
@@ -112,12 +113,10 @@ impl AccountModel {
                 updated_at"#,
             user_id,
             asset_type_id,
-            action_type
-                .available_balance_change
-                .calculate_change(amount),
-            action_type.frozen_balance_change.calculate_change(amount),
-            action_type.total_income_change.calculate_change(amount),
-            action_type.total_expense_change.calculate_change(amount),
+            amount_available_balance,
+            amount_frozen_balance,
+            amount_total_income,
+            amount_total_expense,
         )
         .fetch_one(executor)
         .await?;
