@@ -47,14 +47,6 @@ impl<'a> AccountService {
     pub async fn create(account_request: &AccountRequest) -> AppResult<AccountModel> {
         Self::check_asset_type_id(account_request.asset_type_id).await?;
         let pool = postgres::conn();
-        if AccountModel::is_exists(pool, account_request.user_id, account_request.asset_type_id)
-            .await
-        {
-            return Err(Error::Custom(
-                StatusCode::CONFLICT,
-                "账户已存在".to_string(),
-            ));
-        }
         let account =
             AccountModel::create(pool, account_request.user_id, account_request.asset_type_id)
                 .await?;
@@ -69,13 +61,7 @@ impl<'a> AccountService {
             account_request.asset_type_id,
         )
         .await?;
-        if let Some(account) = account {
-            return Ok(account);
-        }
-        Err(Error::Custom(
-            StatusCode::NOT_FOUND,
-            "账户不存在".to_string(),
-        ))
+        Ok(account)
     }
 
     pub async fn actions(account_action_requests: &Vec<AccountActionRequest>) -> AppResult<()> {
@@ -149,14 +135,8 @@ impl<'a> AccountService {
             account.frozen_balance,
             account.total_income,
             account.total_expense,
-            account_action_request
-                .order_number
-                .as_deref()
-                .unwrap_or_default(),
-            account_action_request
-                .description
-                .as_deref()
-                .unwrap_or_default(),
+            account_action_request.order_number.as_ref(),
+            account_action_request.description.as_ref(),
         )
         .await?;
         Ok(())

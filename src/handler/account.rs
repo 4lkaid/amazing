@@ -30,9 +30,9 @@ pub struct AccountActionRequest {
     #[validate(range(min = 0.000001), custom(function = "validate_amount"))]
     pub amount: f64,
     #[validate(length(min = 32))]
-    pub order_number: Option<String>,
+    pub order_number: String,
     #[validate(length(min = 1))]
-    pub description: Option<String>,
+    pub description: String,
 }
 
 fn validate_asset_type_id(id: i32) -> Result<(), ValidationError> {

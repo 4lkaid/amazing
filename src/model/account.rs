@@ -52,7 +52,7 @@ impl AccountModel {
         executor: impl PgExecutor<'_>,
         user_id: i32,
         asset_type_id: i32,
-    ) -> AppResult<Option<Self>> {
+    ) -> AppResult<Self> {
         let account = sqlx::query_as!(
             Self,
             r#"select
@@ -74,7 +74,7 @@ impl AccountModel {
             user_id,
             asset_type_id
         )
-        .fetch_optional(executor)
+        .fetch_one(executor)
         .await?;
         Ok(account)
     }
