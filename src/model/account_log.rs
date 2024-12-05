@@ -73,4 +73,26 @@ impl AccountLogModel {
         .await?;
         Ok(())
     }
+
+    // 账户操作日志是否存在
+    #[allow(dead_code)]
+    pub async fn is_exists(
+        executor: impl PgExecutor<'_>,
+        account_id: i32,
+        action_type_id: i32,
+        order_number: &str,
+    ) -> bool {
+        if let Ok(Some(exists)) = sqlx::query_scalar!(
+            r#"select exists(select 1 from account_log where account_id = $1 and action_type_id = $2 and order_number = $3)"#,
+            account_id,
+            action_type_id,
+            order_number
+        )
+        .fetch_one(executor)
+        .await
+        {
+            return exists;
+        }
+        false
+    }
 }
