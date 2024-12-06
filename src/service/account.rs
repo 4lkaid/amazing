@@ -20,7 +20,7 @@ impl AccountService {
         if !AccountModel::is_active(postgres::conn(), user_id, asset_type_id).await {
             return Err(Error::Custom(
                 StatusCode::FORBIDDEN,
-                "账户未启用".to_string(),
+                "操作失败，存在未启用账户".to_string(),
             ));
         }
         Ok(())
@@ -37,7 +37,7 @@ impl AccountService {
         {
             return Err(Error::Custom(
                 StatusCode::PAYMENT_REQUIRED,
-                "账户余额不足".to_string(),
+                "操作失败，存在余额不足的账户".to_string(),
             ));
         }
         Ok(())
@@ -54,7 +54,7 @@ impl AccountService {
         {
             return Err(Error::Custom(
                 StatusCode::PAYMENT_REQUIRED,
-                "账户余额不足".to_string(),
+                "操作失败，存在余额不足的账户".to_string(),
             ));
         }
         Ok(())
@@ -70,7 +70,7 @@ impl AccountService {
         {
             return Err(Error::Custom(
                 StatusCode::CONFLICT,
-                "该订单号已处理".to_string(),
+                "操作失败，存在已处理的订单".to_string(),
             ));
         }
         Ok(())
@@ -111,7 +111,7 @@ impl AccountService {
             if !account.is_active {
                 return Err(Error::Custom(
                     StatusCode::FORBIDDEN,
-                    "账户未启用".to_string(),
+                    "操作失败，存在未启用账户".to_string(),
                 ));
             }
             // 操作前检查余额是否充足
