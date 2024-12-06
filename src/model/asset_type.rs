@@ -7,8 +7,14 @@ pub struct AssetTypeModel {
     pub id: i32,
     pub name: String,
     pub description: String,
+    #[allow(dead_code)]
+    #[serde(skip_serializing)]
     pub is_active: bool,
+    #[allow(dead_code)]
+    #[serde(skip_serializing)]
     pub created_at: NaiveDateTime,
+    #[allow(dead_code)]
+    #[serde(skip_serializing)]
     pub updated_at: NaiveDateTime,
 }
 

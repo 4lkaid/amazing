@@ -15,7 +15,11 @@ pub struct AccountModel {
     pub total_income: Decimal,
     pub total_expense: Decimal,
     pub is_active: bool,
+    #[allow(dead_code)]
+    #[serde(skip_serializing)]
     pub created_at: NaiveDateTime,
+    #[allow(dead_code)]
+    #[serde(skip_serializing)]
     pub updated_at: NaiveDateTime,
 }
 

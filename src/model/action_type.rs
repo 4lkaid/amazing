@@ -35,8 +35,14 @@ pub struct ActionTypeModel {
     pub frozen_balance_change: Change,
     pub total_income_change: Change,
     pub total_expense_change: Change,
+    #[allow(dead_code)]
+    #[serde(skip_serializing)]
     pub is_active: bool,
+    #[allow(dead_code)]
+    #[serde(skip_serializing)]
     pub created_at: NaiveDateTime,
+    #[allow(dead_code)]
+    #[serde(skip_serializing)]
     pub updated_at: NaiveDateTime,
 }
 
