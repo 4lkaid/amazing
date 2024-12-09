@@ -1,6 +1,6 @@
-use super::action_type::ActionTypeService;
+use super::{action_type::ActionTypeService, asset_type::AssetTypeService};
 use crate::{
-    handler::account::{AccountActionRequest, AccountRequest},
+    handler::account::{AccountActionRequest, AccountRequest, AccountsRequest},
     model::{
         account::AccountModel,
         account_log::AccountLogModel,
@@ -94,6 +94,16 @@ impl AccountService {
         )
         .await?;
         Ok(account)
+    }
+
+    pub async fn infos(accounts_request: &AccountsRequest) -> AppResult<Vec<AccountModel>> {
+        let accounts = AccountModel::find_multiple(
+            postgres::conn(),
+            accounts_request.user_id,
+            AssetTypeService::ids(),
+        )
+        .await?;
+        Ok(accounts)
     }
 
     pub async fn actions(account_action_requests: &Vec<AccountActionRequest>) -> AppResult<()> {

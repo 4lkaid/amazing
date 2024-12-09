@@ -7,11 +7,11 @@ use crate::{
 use axum::{http::StatusCode, Json};
 use axum_kit::{validation::ValidatedJson, AppResult};
 use num_traits::cast::FromPrimitive;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use sqlx::types::Decimal;
 use validator::{Validate, ValidationError};
 
-#[derive(Deserialize, Validate, Debug, Serialize)]
+#[derive(Deserialize, Validate, Debug)]
 pub struct AccountRequest {
     #[validate(range(min = 1))]
     pub user_id: i32,
@@ -19,7 +19,13 @@ pub struct AccountRequest {
     pub asset_type_id: i32,
 }
 
-#[derive(Deserialize, Validate, Debug, Serialize)]
+#[derive(Deserialize, Validate, Debug)]
+pub struct AccountsRequest {
+    #[validate(range(min = 1))]
+    pub user_id: i32,
+}
+
+#[derive(Deserialize, Validate, Debug)]
 pub struct AccountActionRequest {
     #[validate(range(min = 1))]
     pub user_id: i32,
@@ -69,6 +75,14 @@ pub async fn info(
     ValidatedJson(payload): ValidatedJson<AccountRequest>,
 ) -> AppResult<Json<AccountModel>> {
     let account = AccountService::info(&payload).await?;
+    Ok(Json(account))
+}
+
+// 某`user_id`所有账户信息
+pub async fn infos(
+    ValidatedJson(payload): ValidatedJson<AccountsRequest>,
+) -> AppResult<Json<Vec<AccountModel>>> {
+    let account = AccountService::infos(&payload).await?;
     Ok(Json(account))
 }
 

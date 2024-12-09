@@ -1,12 +1,12 @@
 use axum_kit::AppResult;
 use num_traits::cast::FromPrimitive;
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use sqlx::{
     types::{chrono::NaiveDateTime, Decimal},
     PgExecutor,
 };
 
-#[derive(Deserialize, Serialize, sqlx::Type, PartialEq)]
+#[derive(Serialize, sqlx::Type, PartialEq)]
 #[sqlx(type_name = "change_enum", rename_all = "UPPERCASE")]
 pub enum Change {
     Inc,
@@ -26,7 +26,7 @@ impl Change {
     }
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Serialize)]
 pub struct ActionTypeModel {
     pub id: i32,
     pub name: String,

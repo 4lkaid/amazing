@@ -1,11 +1,11 @@
 use axum_kit::AppResult;
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use sqlx::{
     types::{chrono::NaiveDateTime, Decimal},
     PgExecutor,
 };
 
-#[derive(Deserialize, Serialize)]
+#[derive(Serialize)]
 pub struct AccountModel {
     pub id: i32,
     pub user_id: i32,
@@ -81,6 +81,37 @@ impl AccountModel {
         .fetch_one(executor)
         .await?;
         Ok(account)
+    }
+
+    pub async fn find_multiple(
+        executor: impl PgExecutor<'_>,
+        user_id: i32,
+        asset_type_ids: Vec<i32>,
+    ) -> AppResult<Vec<Self>> {
+        let accounts = sqlx::query_as!(
+            Self,
+            r#"select
+                id,
+                user_id,
+                asset_type_id,
+                available_balance,
+                frozen_balance,
+                total_income,
+                total_expense,
+                is_active,
+                created_at,
+                updated_at
+            from
+                account
+            where
+                user_id = $1
+                and asset_type_id = any($2)"#,
+            user_id,
+            &asset_type_ids
+        )
+        .fetch_all(executor)
+        .await?;
+        Ok(accounts)
     }
 
     #[allow(dead_code)]

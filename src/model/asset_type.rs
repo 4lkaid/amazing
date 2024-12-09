@@ -1,8 +1,8 @@
 use axum_kit::AppResult;
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use sqlx::{types::chrono::NaiveDateTime, PgExecutor};
 
-#[derive(Deserialize, Serialize)]
+#[derive(Serialize)]
 pub struct AssetTypeModel {
     pub id: i32,
     pub name: String,

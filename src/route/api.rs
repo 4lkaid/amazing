@@ -17,6 +17,8 @@ pub fn init() -> Router {
         .route("/accounts/new", post(handler::account::create))
         // 获取资产账户信息
         .route("/accounts/info", post(handler::account::info))
+        // 获取某`user_id`所有资产账户信息
+        .route("/accounts/infos", post(handler::account::infos))
         // 资产账户操作
         .route("/accounts/actions", post(handler::account::actions))
         .layer(

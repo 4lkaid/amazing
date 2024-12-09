@@ -1,11 +1,11 @@
 use axum_kit::AppResult;
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use sqlx::{
     types::{chrono::NaiveDateTime, Decimal},
     PgExecutor,
 };
 
-#[derive(Deserialize, Serialize)]
+#[derive(Serialize)]
 pub struct AccountLogModel {
     pub id: i64,
     pub account_id: i32,
