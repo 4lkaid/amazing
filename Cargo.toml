@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-axum-kit = { version = "0.2", features = ["postgres", "redis"] }
+axum-kit = { version = "0.3", features = ["postgres", "redis"] }
 anyhow = "1"
 axum = "0.7"
 chrono = { version = "0.4", features = ["serde"] }

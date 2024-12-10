@@ -5,15 +5,16 @@ mod service;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let _worker_guard = axum_kit::bootstrap::Application::new(route::api::init())?
-        .before_run(|| {
-            tokio::spawn(async move {
-                service::asset_type::AssetTypeService::init().await?;
-                service::action_type::ActionTypeService::init().await?;
-                Ok(())
+    let _worker_guard =
+        axum_kit::bootstrap::Application::default("config.toml", route::api::init())?
+            .before_run(|| {
+                tokio::spawn(async move {
+                    service::asset_type::AssetTypeService::init().await?;
+                    service::action_type::ActionTypeService::init().await?;
+                    Ok(())
+                })
             })
-        })
-        .run()
-        .await?;
+            .run()
+            .await?;
     Ok(())
 }
